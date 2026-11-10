@@ -1,0 +1,82 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../Breadcrumbs.astro';
+import ArticleCard from '../ArticleCard.astro';
+import Cover from '../Cover.astro';
+import AdSlot from '../AdSlot.astro';
+import Pagination from '../Pagination.astro';
+import Newsletter from '../Newsletter.astro';
+import { CATEGORIES } from '../../data/taxonomy';
+import { glyphSvg } from '../../lib/glyphs';
+import { articleUrl, formatDate, readingTime, type Article } from '../../lib/articles';
+interface Props { category: (typeof CATEGORIES)[number]; lead?: Article; items: Article[]; all: Article[]; current: number; last: number }
+const { category: c, lead, items, all, current, last } = Astro.props;
+const published = all.filter((a) => !a.data.draft).length;
+const subs = c.subtopics.filter((s) => items.some((a) => a.data.subtopic === s));
+---
+<BaseLayout
+  title={current === 1 ? `${c.name}: articles and guides` : `${c.name}, page ${current}`}
+  description={c.intro.slice(0, 155).replace(/\s+\S*$/, '') + '…'}
+  current="articles"
+>
+  <section class="band bp"><div class="wrap">
+    <Breadcrumbs items={[{ name: 'Home', href: '/' }, { name: 'Articles', href: '/articles/' }, { name: c.name }]} />
+    <div class="band-grid">
+      <div>
+        <span class="spec">Section · {c.code}</span>
+        <h1 class="display" style="margin-top:12px">{c.name}</h1>
+        <p class="intro">{c.intro}</p>
+        <div class="stats"><div><b>{published}</b>Articles</div><div><b>{c.subtopics.length}</b>Subtopics</div></div>
+      </div>
+      <div class="band-fig" set:html={glyphSvg(c.id)} />
+    </div>
+  </div></section>
+  <div class="ad-band"><div class="wrap"><AdSlot slot="header" /></div></div>
+  <section class="sec" style="padding-top:24px"><div class="wrap">
+    {lead && current === 1 && (
+      <a class="start-here" href={articleUrl(lead)}>
+        <Cover article={lead} eager />
+        <div>
+          <span class="spec">Start here</span>
+          <h2>{lead.data.title}</h2>
+          <p>{lead.data.description}</p>
+          <div class="meta"><span>{formatDate(lead.data.publishedAt)}</span><i></i><span>{readingTime(lead)} min read</span></div>
+        </div>
+      </a>
+    )}
+    {items.length > 0 ? (
+      <>
+        {subs.length > 1 && (
+          <div class="toolbar">
+            <div class="filters" role="group" aria-label="Filter by subtopic">
+              <button type="button" data-sub="all" aria-pressed="true">All</button>
+              {subs.map((s) => <button type="button" data-sub={s} aria-pressed="false">{s}</button>)}
+            </div>
+          </div>
+        )}
+        <div class="grid" id="cat-grid">{items.map((a) => <ArticleCard article={a} headingLevel="h2" />)}</div>
+        <Pagination current={current} last={last} base={`/${c.id}/`} />
+      </>
+    ) : (
+      !lead && <p class="empty">The first articles in this section are being written. Subscribe below to get them first.</p>
+    )}
+    <div style="margin-top:64px">
+      <div class="sec-h" style="margin-bottom:20px"><span class="spec">Other sections</span></div>
+      <nav class="cats" aria-label="Other sections">{CATEGORIES.filter((x) => x.id !== c.id).map((x) => <a class="chip cat" href={`/${x.id}/`}>{x.name}</a>)}</nav>
+    </div>
+  </div></section>
+  <section class="sec" style="padding-top:0"><div class="wrap"><Newsletter /></div></section>
+</BaseLayout>
+<script>
+  const btns = document.querySelectorAll<HTMLButtonElement>('[data-sub]');
+  btns.forEach((b) => {
+    if (b.tagName !== 'BUTTON') return;
+    b.addEventListener('click', () => {
+      const v = b.dataset.sub;
+      btns.forEach((x) => x.tagName === 'BUTTON' && x.setAttribute('aria-pressed', String(x === b)));
+      document.querySelectorAll<HTMLElement>('#cat-grid .card').forEach((card) => {
+        card.hidden = v !== 'all' && card.dataset.sub !== v;
+      });
+    });
+  });
+</script>

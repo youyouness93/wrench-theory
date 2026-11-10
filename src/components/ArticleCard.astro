@@ -1,0 +1,22 @@
+---
+import Cover from './Cover.astro';
+import { articleUrl, cardTitle, categoryOf, formatDate, readingTime, type Article } from '../lib/articles';
+interface Props { article: Article; headingLevel?: 'h2' | 'h3' }
+const { article, headingLevel = 'h3' } = Astro.props;
+const d = article.data;
+const H = headingLevel;
+---
+<a class="card" href={articleUrl(article)} data-sub={d.subtopic}>
+  <Cover article={article} />
+  <div class="chips">
+    <span class="chip cat">{categoryOf(article).short}</span>
+    <span class="chip fmt">{d.format}</span>
+    {d.draft && <span class="chip draft">Draft</span>}
+  </div>
+  <H>{cardTitle(article)}</H>
+  <p>{d.description}</p>
+  <div class="meta"><time datetime={d.publishedAt.toISOString()}>{formatDate(d.publishedAt)}</time><i></i><span>{readingTime(article)} min read</span></div>
+</a>
+<style>
+  .card h2 { font-family: var(--f-display); font-weight: 800; font-size: 26px; line-height: 1.02; text-transform: uppercase; letter-spacing: 0.3px; margin: 0; }
+</style>

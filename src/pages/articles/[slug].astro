@@ -1,0 +1,242 @@
+---
+import { render } from 'astro:content';
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import Mark from '../../components/Mark.astro';
+import Icon from '../../components/Icon.astro';
+import Cover from '../../components/Cover.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import { mdxComponents } from '../../components/mdx';
+import { figureSvg } from '../../lib/figures';
+import { CATEGORIES, getCategory } from '../../data/taxonomy';
+import { SITE } from '../../config/site';
+import { getArticles, relatedArticles, readingTime, monthYear, cardTitle, articleUrl, type Article } from '../../lib/articles';
+
+export async function getStaticPaths() {
+  const all = await getArticles();
+  return all.map((article) => ({ params: { slug: article.id }, props: { article, all } }));
+}
+interface Props { article: Article; all: Article[] }
+const { article, all } = Astro.props;
+const d = article.data;
+const cat = getCategory(d.category);
+const { Content, headings } = await render(article);
+const sections = headings.filter((h) => h.depth === 2);
+const minutes = readingTime(article);
+const updated = d.updatedAt ?? d.publishedAt;
+const related = relatedArticles(article, all);
+const popular = all.filter((a) => !a.data.draft && a.id !== article.id).slice(0, 5);
+const author = d.author ?? SITE.author.name;
+const site = Astro.site ?? new URL(Astro.url.origin);
+const url = new URL(articleUrl(article), site).href;
+const ogImage = d.heroImage ? d.heroImage.src : SITE.ogImage;
+
+const jsonLd: object[] = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'TechArticle',
+    headline: d.title,
+    description: d.metaDescription ?? d.description,
+    image: [new URL(ogImage, site).href],
+    datePublished: d.publishedAt.toISOString(),
+    dateModified: updated.toISOString(),
+    author: { '@type': 'Organization', name: author, url: new URL('/about/', site).href },
+    publisher: { '@type': 'Organization', name: SITE.name, logo: { '@type': 'ImageObject', url: new URL('/brand/wt-avatar.png', site).href } },
+    mainEntityOfPage: url,
+    articleSection: cat.name,
+    keywords: d.tags.join(', '),
+    timeRequired: `PT${minutes}M`,
+  },
+];
+if (d.faq.length && !d.draft) {
+  jsonLd.push({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: d.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  });
+}
+const enc = encodeURIComponent;
+---
+<BaseLayout
+  title={d.seoTitle ?? d.title}
+  description={d.metaDescription ?? d.description}
+  image={ogImage}
+  imageAlt={d.heroAlt ?? d.title}
+  type="article"
+  current="articles"
+  publishedTime={d.publishedAt}
+  modifiedTime={updated}
+  noindex={d.draft}
+  jsonLd={jsonLd}
+>
+  <article>
+    <header class="a-head band bp">
+      <div class="wrap">
+        <Breadcrumbs items={[{ name: 'Home', href: '/' }, { name: cat.name, href: `/${cat.id}/` }, { name: cardTitle(article) }]} />
+        <div class="chips">
+          <a class="chip cat" href={`/${cat.id}/`}>{cat.name}</a>
+          <span class="chip fmt">{d.format}</span>
+          {d.draft && <span class="chip draft">Draft · not published</span>}
+        </div>
+        <h1 class="display">{d.title}</h1>
+        <p class="sub">{d.description}</p>
+        <div class="byline">
+          <div class="who"><Mark size={44} /><span><b>{author}</b><span>{SITE.author.role}</span></span></div>
+          <div class="meta">
+            <span>Updated <time datetime={updated.toISOString()}>{monthYear(updated)}</time></span><i></i>
+            <span>{minutes} min read</span><i></i><span>DWG. {d.docNumber}</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="ad-band"><div class="wrap"><AdSlot slot="header" /></div></div>
+
+    <div class="wrap">
+      <div class="a-body">
+        <div class="prose">
+          <figure class="a-fig">
+            {d.heroImage ? (
+              <div class="frame"><Image src={d.heroImage} alt={d.heroAlt ?? ''} widths={[640, 960, 1400]} sizes="(max-width: 1060px) 100vw, 760px" loading="eager" /></div>
+            ) : d.heroFigure ? (
+              <div class="frame" set:html={figureSvg(d.heroFigure)} />
+            ) : (
+              <Cover article={article} style="aspect-ratio:21/9;border-radius:var(--r-xl)" eager />
+            )}
+            {d.heroCaption && <figcaption>{d.heroCaption}</figcaption>}
+          </figure>
+
+          {sections.length > 1 && (
+            <nav class="toc" aria-labelledby="toc-h">
+              <span class="toc-h" id="toc-h">Table of contents</span>
+              <ol>
+                {sections.map((s) => <li><a href={`#${s.slug}`}>{s.text}</a></li>)}
+                {d.faq.length > 0 && <li><a href="#faq">Frequently asked questions</a></li>}
+              </ol>
+            </nav>
+          )}
+
+          {d.video && (
+            (d.video.url ? (
+              <a class="watch" href={d.video.url} target="_blank" rel="noopener">
+                <div class="short" aria-hidden="true"><span class="play"><Icon name="play" /></span></div>
+                <div><span class="spec-sm">Short · {d.video.length}</span><b>Watch: {d.video.title}</b><span class="w-d">The 60-second version of this topic.</span></div>
+              </a>
+            ) : (
+              <div class="watch">
+                <div class="short" aria-hidden="true"><span class="play"><Icon name="play" /></span></div>
+                <div><span class="spec-sm">Short · {d.video.length}</span><b>{d.video.title}</b><span class="w-d">The 60-second version is on YouTube Shorts, TikTok and Instagram.</span></div>
+              </div>
+            ))
+          )}
+
+          {d.draft && d.outline.length > 0 && (
+            <div class="outline">
+              <div class="box-k"><Icon name="doc" /> Draft · planned outline</div>
+              <ol>{d.outline.map((o) => <li>{o}</li>)}</ol>
+            </div>
+          )}
+
+          <div class="content">
+            <Content components={mdxComponents} />
+          </div>
+
+          {d.faq.length > 0 && (
+            <section class="faq" id="faq" aria-labelledby="faq-h">
+              <h2 id="faq-h">Frequently asked questions</h2>
+              {d.faq.map((f) => (
+                <details><summary>{f.q}<Icon name="plus" /></summary><p>{f.a}</p></details>
+              ))}
+            </section>
+          )}
+
+          {d.sources.length > 0 && (
+            <div class="sources"><h2>Sources</h2><ul>{d.sources.map((s) => <li>{s}</li>)}</ul></div>
+          )}
+
+          <div class="author">
+            <Mark size={64} />
+            <div><b>{author}</b><span class="spec-sm">{SITE.author.role}</span><p>{SITE.author.bio}</p></div>
+          </div>
+
+          <div class="share">
+            <span class="spec-sm">Share</span>
+            <button type="button" class="copy-link" data-url={url}><Icon name="link" /> <span>Copy link</span></button>
+            <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${enc(url)}`} target="_blank" rel="noopener"><Icon name="out" /> LinkedIn</a>
+            <a href={`https://www.facebook.com/sharer/sharer.php?u=${enc(url)}`} target="_blank" rel="noopener"><Icon name="out" /> Facebook</a>
+            <a href={`https://x.com/intent/post?url=${enc(url)}&text=${enc(d.title)}`} target="_blank" rel="noopener"><Icon name="out" /> X</a>
+          </div>
+
+          <AdSlot slot="end" class="ad-in" />
+
+          {related.length > 0 && (
+            <section class="related" aria-labelledby="rel-h">
+              <h2 id="rel-h">Related articles</h2>
+              <div class="grid">{related.map((r) => <ArticleCard article={r} />)}</div>
+            </section>
+          )}
+        </div>
+
+        <aside class="rail" aria-label="Sidebar">
+          <div class="rail-sticky">
+            {sections.length > 1 && (
+              <div class="rail-box otp-box">
+                <h2>On this page</h2>
+                <ul class="otp">
+                  {sections.map((s) => <li><a href={`#${s.slug}`} data-otp={s.slug}>{s.text}</a></li>)}
+                  {d.faq.length > 0 && <li><a href="#faq" data-otp="faq">FAQ</a></li>}
+                </ul>
+              </div>
+            )}
+            <AdSlot slot="sidebar" />
+          </div>
+          {popular.length > 0 && (
+            <div class="rail-box"><h2>Latest articles</h2><ol class="pop">{popular.map((p) => <li><a href={articleUrl(p)}>{cardTitle(p)}</a></li>)}</ol></div>
+          )}
+          <div class="rail-box"><h2>Sections</h2><div class="cats">{CATEGORIES.map((c) => <a class="chip cat" href={`/${c.id}/`}>{c.short}</a>)}</div></div>
+        </aside>
+      </div>
+    </div>
+  </article>
+</BaseLayout>
+
+<script>
+  // Reading progress, active section in "On this page", copy link.
+  const bar = document.getElementById('progress');
+  const prose = document.querySelector('.prose');
+  const onScroll = () => {
+    if (!bar || !prose) return;
+    const r = prose.getBoundingClientRect();
+    const total = r.height - innerHeight * 0.5;
+    bar.style.width = Math.max(0, Math.min(100, ((-r.top + 120) / total) * 100)) + '%';
+  };
+  addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-otp]')];
+  const targets = links.map((l) => document.getElementById(l.dataset.otp!)).filter(Boolean) as HTMLElement[];
+  if ('IntersectionObserver' in window && targets.length) {
+    const io = new IntersectionObserver(
+      (entries) => entries.forEach((e) => {
+        if (e.isIntersecting) links.forEach((l) => l.classList.toggle('on', l.dataset.otp === e.target.id));
+      }),
+      { rootMargin: '-30% 0px -60% 0px' },
+    );
+    targets.forEach((t) => io.observe(t));
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('.copy-link').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const label = btn.querySelector('span')!;
+      try {
+        await navigator.clipboard.writeText(btn.dataset.url!);
+        label.textContent = 'Link copied';
+      } catch {
+        label.textContent = btn.dataset.url!;
+      }
+      setTimeout(() => (label.textContent = 'Copy link'), 2000);
+    });
+  });
+</script>

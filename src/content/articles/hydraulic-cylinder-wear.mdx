@@ -1,0 +1,176 @@
+---
+title: "Hydraulic Cylinder Wear: Causes, Symptoms and Failure Analysis"
+shortTitle: "Hydraulic Cylinder Wear"
+description: "How wear develops on the bore, rod and seals, the warning signs to catch early, and how to tell a reseal job from a cylinder that needs a new tube."
+seoTitle: "Hydraulic Cylinder Wear: Causes, Symptoms & Failure Analysis"
+metaDescription: "Why hydraulic cylinders wear out: contamination, side loading, heat and pressure spikes. Symptoms, inspection steps, repair decisions and prevention."
+category: hydraulics
+subtopic: Cylinders
+format: Failure Analysis
+tags: [hydraulic cylinder, seals, rod, contamination, side loading, ISO 4406]
+publishedAt: 2026-11-10
+docNumber: WT-014
+featured: true
+heroFigure: cylinder-cutaway
+heroCaption: "FIG. 1 — Double-acting cylinder. Wear concentrates on the rod surface, the bore under the piston's travel, and the seals and wear bands that ride on them."
+video:
+  title: "Why hydraulic cylinders leak"
+faq:
+  - q: "What causes premature hydraulic cylinder wear?"
+    a: "Contamination is the most common cause, followed by misalignment and side loading, poor oil condition and heat, and pressure spikes. They often act together: dirt gets in through a worn wiper, scores the rod, and the scored rod wears the next set of seals."
+  - q: "How do you identify worn piston seals?"
+    a: "The classic signs are drift under load with the valve centered, slow or weak motion, and heat at the cylinder. A bypass test done under an approved procedure confirms whether oil is passing the piston."
+  - q: "Can a worn cylinder be repaired?"
+    a: "Usually, yes. Worn seals alone call for a reseal. A damaged rod can be re-chromed or replaced, and a lightly scored bore can be honed within the manufacturer's limits. A bent rod or an oval bore usually means replacing that part."
+  - q: "Why does my cylinder drift even with new seals?"
+    a: "Check the directional valve, any counterbalance or pilot-operated check valve, and the bore. A scored or oval bore will leak past brand-new seals."
+sources:
+  - "Service manuals for the cylinder and seal kit in use."
+  - "ISO 4406:2021, Hydraulic fluid power — Fluids — Method for coding the level of contamination by solid particles."
+related: [hydraulic-cavitation, fluid-contamination, hydraulic-pump-failure]
+---
+
+<p class="lead">A hydraulic cylinder is one of the most critical components in industrial machinery. Understanding how wear develops, identifying its early symptoms and knowing what causes premature failure can significantly improve equipment reliability. This guide covers the wear types, their causes, how to inspect a cylinder on the machine and on the bench, and how to decide between resealing, repairing and replacing.</p>
+
+## Understanding hydraulic cylinder wear
+
+A double-acting cylinder turns fluid pressure into a straight push or pull. Pressure on the cap side drives the piston out; pressure on the rod side pulls it back. Everything that moves rides on a film of oil and a set of seals, and that is where wear starts.
+
+Three surfaces carry almost all of the wear:
+
+- **The rod**, a hard-chrome-plated steel bar that leaves the cylinder on every stroke and comes back in carrying whatever it touched outside.
+- **The bore**, the honed inside of the barrel that the piston seals and wear band slide along.
+- **The seals and wear bands**: piston seals keep the two chambers apart, the rod seal keeps oil in, the wiper keeps dirt out, and the wear bands (guide rings) keep metal from touching metal.
+
+Wear is gradual loss of material or shape on these surfaces. A cylinder can lose a little and keep working. The trouble starts when wear opens a leak path, either outside past the rod seal, or inside past the piston from one chamber to the other.
+
+<Note>
+Seals are designed to wear; they are the sacrificial part. A cylinder that eats seals quickly is telling you the rod, the bore, the oil or the mounting has a problem. Treat seal life as a symptom, not the root cause.
+</Note>
+
+## Main types of wear
+
+Each type of wear leaves its own marks. Learning to read them is the fastest route to the cause.
+
+| Wear type | Where | What you see | Usual cause |
+| --- | --- | --- | --- |
+| **Abrasive** | Rod, bore, seals | Fine axial scratches, dull bands, cut seal lips | Hard particles in the oil or dragged in past the wiper |
+| **Adhesive (galling)** | Bore, piston | Torn, smeared metal; deep score marks | Wear band worn through, metal-to-metal contact |
+| **Seal extrusion** | Piston and rod seals | Nibbled or feathered seal edges | Pressure spikes, worn gaps, heat-softened seals |
+| **Corrosion and pitting** | Rod | Pits, chrome flaking, rust spots | Water, chemicals, cracked chrome, idle machines |
+| **Uneven (side-load) wear** | Bore, wear bands, gland | Wear on one side only, oval bore | Misalignment or side loading |
+| **Fretting** | Pins, clevises, spherical bearings | Red-brown oxide, loose pin fits | Small oscillating movement, no lubrication |
+
+<TableCaption>Table 1 — Wear types and the evidence they leave.</TableCaption>
+
+### Rod damage is the most visible
+
+The rod is the only precision surface you can see without taking the cylinder apart. A single scratch across the chrome will cut the rod seal on every stroke and turn into a weeping leak within weeks. Pitting is worse: each pit carries oil out and dirt in.
+
+## Common causes
+
+Almost every case of premature wear traces back to one of four causes. They often work together.
+
+### 1. Contamination
+
+Dirt is the leading cause of hydraulic component wear. Particles come in with new oil, through a worn wiper on the rod's return stroke, through an open breather, or from wear inside the system itself. Hard particles about the size of the oil-film clearance do the most damage, because they get trapped between the moving surfaces.
+
+Oil cleanliness is reported as an ISO 4406 code: three numbers that describe particle counts at 4, 6 and 14 µm. Check the cylinder or system manufacturer's target. Many industrial systems with cylinders aim for around 18/16/13 or cleaner.
+
+### 2. Misalignment and side loading
+
+A cylinder is built to push and pull along its own axis. When the mounting is out of line, or the cylinder is used to guide the load sideways, the wear band and gland carry a load they were not designed for. The result is wear on one side of the bore, an oval bore, and a rod seal that leaks on one side first.
+
+### 3. Poor fluid condition and heat
+
+Oil that runs too hot thins out and ages quickly. Seals harden, crack and lose their grip. Water in the oil breaks down the film and rusts the bore and rod. Wrong viscosity, mixed fluids and degraded additives all shorten seal life.
+
+### 4. Pressure spikes and mechanical damage
+
+Shock loads, a relief valve set too high or a sticking valve can push seal material into the clearance gaps until it extrudes and tears. Outside the cylinder, weld spatter, impacts and grinding sparks pit the chrome.
+
+<Formula
+  title="Cylinder force"
+  eq="F = P × A    A = π × d² ÷ 4"
+  vars={[["F", "Force (lbf or N)"], ["P", "Pressure (psi or Pa)"], ["A", "Effective area: full bore on extend, bore minus rod on retract"], ["d", "Bore diameter (or rod diameter)"]]}
+>
+Example: 3 in bore, 1.5 in rod, 2,000 psi<br />
+Extend: A = π × 3² ÷ 4 = 7.07 in² → F = 14,137 lbf<br />
+Retract: A = 7.07 − 1.77 = 5.30 in² → F = 10,603 lbf
+</Formula>
+
+That retract force is why a side load or a stuck load on the rod end does so much damage. The force is large, and it goes through the wear band and the gland.
+
+<Takeaway>
+A cylinder rarely wears out alone. If you reseal it without fixing the contamination, the alignment or the heat, you will be resealing it again.
+</Takeaway>
+
+## Symptoms and warning signs
+
+Catch these early and the job is a reseal. Ignore them and it becomes a new rod, a new tube, or a new cylinder.
+
+<Checklist>
+- **External leak at the gland.** A wet ring of oil on the rod, then drips. The rod seal or the rod surface is worn.
+- **Drift.** The load creeps down while the valve is centered. Internal leakage past the piston, or a leaking valve or counterbalance.
+- **Slow or weak motion.** Oil bypasses the piston instead of doing work.
+- **Jerky or chattering motion.** Air in the oil, sticking seals or a scored bore.
+- **Heat at the cylinder.** Oil flowing across the piston under pressure turns into heat.
+- **Visible rod marks.** Scratches, pits or dull bands along the chrome.
+- **Dark, milky or gritty oil** in the reservoir or in the samples.
+</Checklist>
+
+<InArticleAd />
+
+## Inspection and diagnosis
+
+### On the machine
+
+Start with what you can see and measure without opening anything. Clean the rod, extend it fully, and inspect it in good light. Run a fingernail across any mark: if it catches, the rod seal will feel it too. Note where the marks are along the stroke. Damage on one side only points to side loading.
+
+Take an oil sample for a particle count and water content. It costs little and tells you whether the cylinder is the problem or the victim.
+
+<Danger>
+**Never open a fitting on a cylinder that is holding a load.** Trapped pressure can be far higher than system pressure and the load can drop. Lower the load or block it mechanically, lock out the power unit, and bleed the pressure according to your site procedure before any test that opens a port.
+</Danger>
+
+### Drift and bypass tests
+
+A drift test is the simplest check: hold a known load with the valve centered and measure how far it moves over a set time. If it drifts, you still need to separate the cylinder from the valve. A bypass test, done only under an approved procedure with the load removed and the cylinder at the end of its stroke, checks whether oil passes the piston seals.
+
+### On the bench
+
+- Check the rod for straightness on V-blocks with a dial indicator.
+- Inspect the bore with a light. Measure it with a bore gauge at several points along the stroke and at 90° to find taper and ovality.
+- Look at the wear band: even wear all around is normal, heavy wear on one side means side loading.
+- Keep the old seals in order. Their condition is your best evidence.
+
+## Repair and prevention
+
+| Finding | Typical action |
+| --- | --- |
+| Seals worn, rod and bore in good shape | Reseal with the OEM kit, check the wiper |
+| Light scratches on the rod | Polish within the OEM limits, then reseal |
+| Deep scoring, pitting or chrome flaking | Re-chrome and regrind, or replace the rod |
+| Bent rod | Replace the rod and find the side load |
+| Light bore scoring | Hone within the OEM oversize limits |
+| Oval or deeply scored bore | Replace the barrel |
+
+<TableCaption>Table 2 — Repair decisions. The manufacturer's limits always apply.</TableCaption>
+
+### Prevention
+
+- Hold the oil at its cleanliness target with proper filtration and a desiccant breather.
+- Fit rod boots in dusty, wet or weld-spatter areas.
+- Align the mounts and keep pivot pins greased. Never use the cylinder as a guide.
+- Control oil temperature and check the relief setting.
+- Store spare cylinders retracted, capped and protected.
+
+## Maintenance best practices
+
+<Checklist>
+- Inspect rods weekly on critical machines and record findings in the work order.
+- Sample oil on a fixed schedule and trend the ISO code.
+- Clean fittings and couplers before connecting anything.
+- Cap every open port and hose during repairs.
+- Photograph failed seals and rods before they go in the bin.
+</Checklist>

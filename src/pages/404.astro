@@ -1,0 +1,14 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SearchForm from '../components/SearchForm.astro';
+import { CATEGORIES } from '../data/taxonomy';
+---
+<BaseLayout title="Page not found" noindex>
+  <section class="band bp"><div class="wrap">
+    <span class="spec">Error 404</span>
+    <h1 class="display" style="margin-top:12px">Page not found</h1>
+    <p class="intro">This page doesn't exist or has moved. Search the library or pick a section.</p>
+    <div style="margin-top:24px"><SearchForm id="q-404" /></div>
+    <nav class="cats" style="margin-top:24px" aria-label="Sections">{CATEGORIES.map((c) => <a class="chip cat" href={`/${c.id}/`}>{c.name}</a>)}</nav>
+  </div></section>
+</BaseLayout>

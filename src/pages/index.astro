@@ -1,0 +1,147 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SearchForm from '../components/SearchForm.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import Cover from '../components/Cover.astro';
+import AdSlot from '../components/AdSlot.astro';
+import Newsletter from '../components/Newsletter.astro';
+import Icon from '../components/Icon.astro';
+import { CATEGORIES, FORMATS } from '../data/taxonomy';
+import { glyphSvg, dim } from '../lib/glyphs';
+import { figureSvg } from '../lib/figures';
+import { SITE } from '../config/site';
+import { getArticles, articleUrl, cardTitle, formatDate, readingTime, relatedArticles } from '../lib/articles';
+
+const all = await getArticles();
+const published = all.filter((a) => !a.data.draft);
+const featured = published.find((a) => a.data.featured) ?? published[0];
+const latest = all.filter((a) => a !== featured).slice(0, 9);
+const byFormat = FORMATS.map((f) => ({ ...f, article: published.find((a) => a.data.format === f.name) }));
+const withVideo = published.filter((a) => a.data.video).slice(0, 3);
+const count = (id: string) => published.filter((a) => a.data.category === id).length;
+
+const heroFig = `<svg viewBox="0 0 400 400" role="img" aria-label="The Wrench Theory hex nut mark drawn as a technical drawing with dimension lines">
+  <circle cx="200" cy="200" r="168" fill="none" stroke="var(--cobalt-faint)" stroke-width="1.5" stroke-dasharray="4 6"/>
+  <path d="M14 200h372M200 14v372" stroke="var(--cobalt)" stroke-width="1" stroke-dasharray="12 4 2 4" fill="none"/>
+  <image href="/brand/wt-mark.svg" class="mk-light" x="70" y="70" width="260" height="260"/>
+  <image href="/brand/wt-mark-reverse.svg" class="mk-rev" x="70" y="70" width="260" height="260"/>
+  <g class="g">${dim(92, 308, 372, 'ACROSS CORNERS 216')}</g>
+  <path d="M30 92v216M24 92h12M24 308h12" stroke="var(--cobalt)" stroke-width="1.2" fill="none"/>
+  <text x="22" y="200" transform="rotate(-90 22 200)" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="var(--cobalt-ink)" letter-spacing="1">AF 187</text>
+  <text x="388" y="26" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="10" fill="var(--muted)" letter-spacing="1.5">DWG. WT-000 · REV A</text>
+</svg>`;
+const webSiteLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: SITE.name,
+  url: new URL('/', Astro.site).href,
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: { '@type': 'EntryPoint', urlTemplate: new URL('/search/?q={search_term_string}', Astro.site).href },
+    'query-input': 'required name=search_term_string',
+  },
+};
+---
+<BaseLayout title="Wrench Theory | Technical knowledge for millwrights and industrial maintenance" fullTitle current="home" jsonLd={[webSiteLd]}>
+  <section class="hero bp"><div class="wrap">
+    <div>
+      <div class="spec">{SITE.tagline}</div>
+      <h1 class="display">Understand the machines. <span class="o">Master the mechanics.</span></h1>
+      <p class="lede">Wrench Theory is a technical publication for millwrights, maintenance technicians, industrial mechanics and students. In-depth articles on hydraulics, bearings, alignment and troubleshooting, written from the shop floor and checked against the manufacturer's numbers.</p>
+      <SearchForm id="q-hero" />
+      {published.length > 0 && (
+        <div class="latest"><span class="spec-sm">Latest</span>{published.slice(0, 3).map((a) => <a href={articleUrl(a)}>{cardTitle(a)}</a>)}</div>
+      )}
+    </div>
+    <div class="hero-fig" set:html={heroFig} />
+  </div></section>
+
+  {featured && (
+    <section class="sec"><div class="wrap">
+      <div class="sec-h"><div><span class="spec">Featured analysis</span><h2 class="display">This week on the bench</h2></div></div>
+      <a class="feat" href={articleUrl(featured)}>
+        {featured.data.heroFigure ? (
+          <div class="cover bp" style="aspect-ratio:760/300" set:html={figureSvg(featured.data.heroFigure, 'position:absolute;inset:0;width:100%;height:100%')} />
+        ) : (
+          <Cover article={featured} eager />
+        )}
+        <div>
+          <div class="chips"><span class="chip cat">{CATEGORIES.find((c) => c.id === featured.data.category)!.short}</span><span class="chip fmt">{featured.data.format}</span></div>
+          <h3>{featured.data.title}</h3>
+          <p>{featured.data.description}</p>
+          <div class="meta"><span>{SITE.author.name}</span><i></i><span>{formatDate(featured.data.publishedAt)}</span><i></i><span>{readingTime(featured)} min read</span></div>
+          <span class="btn btn-navy" style="margin-top:22px">Read the analysis <Icon name="arrow" size={16} /></span>
+        </div>
+      </a>
+    </div></section>
+  )}
+
+  <section class="sec bp" style="border-block:1px solid var(--hairline)"><div class="wrap">
+    <div class="sec-h"><div><span class="spec">Explore topics</span><h2 class="display">Six technical sections</h2></div><a class="more" href="/articles/">All articles <Icon name="arrow" size={16} /></a></div>
+    <div class="topics">
+      {CATEGORIES.map((c) => (
+        <a class="topic" href={`/${c.id}/`}>
+          <span class="ico bp" set:html={glyphSvg(c.id)} />
+          <span><b>{c.name}</b><span class="d">{c.summary}</span><span class="spec-sm">{count(c.id) === 0 ? 'Coming soon' : `${count(c.id)} article${count(c.id) === 1 ? '' : 's'}`}</span></span>
+        </a>
+      ))}
+    </div>
+  </div></section>
+
+  {latest.length > 0 && (
+    <section class="sec"><div class="wrap">
+      <div class="sec-h"><div><span class="spec">Latest articles</span><h2 class="display">New in the library</h2></div><a class="more" href="/articles/">See all <Icon name="arrow" size={16} /></a></div>
+      <div class="grid">{latest.map((a) => <ArticleCard article={a} />)}</div>
+    </div></section>
+  )}
+
+  <div class="ad-band"><div class="wrap"><AdSlot slot="home" /></div></div>
+
+  <section class="sec deep"><div class="wrap">
+    <div class="sec-h"><div><span class="spec">Deep technical knowledge</span><h2 class="display">Four formats, one standard</h2></div></div>
+    <div class="formats">
+      {byFormat.map((f, i) => (
+        <div class="fmt-col">
+          <span class="k">Format {String(i + 1).padStart(2, '0')}</span>
+          <h3>{f.name}</h3>
+          <p>{f.summary}</p>
+          {f.article ? (
+            <a href={articleUrl(f.article)}>{f.article.data.title}<small>{readingTime(f.article)} min read</small></a>
+          ) : (
+            <span class="soon">First article in preparation<small>Coming soon</small></span>
+          )}
+        </div>
+      ))}
+    </div>
+  </div></section>
+
+  {withVideo.length > 0 && (
+    <section class="sec"><div class="wrap">
+      <div class="sec-h"><div><span class="spec">Video &amp; articles</span><h2 class="display">From 60 seconds to the full story</h2></div></div>
+      <p style="max-width:64ch;margin:-8px 0 36px;font-size:18px">Each short video explains one idea. Its article gives you the full mechanism, the numbers and the procedure, then points you to the next topic.</p>
+      <div class="v2a">
+        {withVideo.map((a) => {
+          const v = a.data.video!;
+          const Tile = v.url ? 'a' : 'div';
+          return (
+            <div class="chain">
+              <Tile class="short" href={v.url} target={v.url ? '_blank' : undefined} rel={v.url ? 'noopener' : undefined} aria-label={v.url ? `Watch: ${v.title}` : undefined}>
+                <span class="t">SHORT · {v.length}</span><span class="play"><Icon name="play" /></span><b>{v.title}</b>
+              </Tile>
+              <div class="chain-body">
+                <span class="chain-step"><Icon name="video" /> Watch</span>
+                <span style="font-weight:700">{v.title}</span>
+                <span class="chain-step"><Icon name="doc" /> Read the full article</span>
+                <a class="art" href={articleUrl(a)}>{a.data.title}</a>
+                <span class="chain-step"><Icon name="web" /> Keep going</span>
+                <div class="chain-rel">{relatedArticles(a, published).map((r) => <a class="chip" href={articleUrl(r)}>{cardTitle(r)}</a>)}</div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div></section>
+  )}
+
+  <section class="sec" style="padding-top:0"><div class="wrap"><Newsletter /></div></section>
+</BaseLayout>

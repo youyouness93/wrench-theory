@@ -1,0 +1,12 @@
+---
+import Icon from '../Icon.astro';
+interface Props { title: string; eq: string; vars?: [string, string][] }
+const { title, eq, vars = [] } = Astro.props;
+const hasExample = Astro.slots.has('default');
+---
+<div class="formula">
+  <div class="box-k"><Icon name="bolt" /> Formula · {title}</div>
+  <div class="eq">{eq}</div>
+  {vars.length > 0 && <dl>{vars.map(([k, v]) => <><dt>{k}</dt><dd>{v}</dd></>)}</dl>}
+  {hasExample && <div class="ex"><slot /></div>}
+</div>

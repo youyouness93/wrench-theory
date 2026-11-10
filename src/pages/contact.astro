@@ -1,0 +1,46 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { SITE, INTEGRATIONS } from '../config/site';
+const endpoint = INTEGRATIONS.contactEndpoint;
+---
+<BaseLayout title="Contact" description="Suggest a topic, report a technical error or ask about partnerships with Wrench Theory." current="contact">
+  <section class="band bp"><div class="wrap">
+    <Breadcrumbs items={[{ name: 'Home', href: '/' }, { name: 'Contact' }]} />
+    <h1 class="display">Contact</h1>
+    <p class="intro">Suggest a topic, report an error in an article, or ask about partnerships.</p>
+  </div></section>
+  <div class="wrap"><div class="contact-grid">
+    <form class="form" id="contact-form" action={endpoint || undefined} method="post" data-endpoint={endpoint} novalidate>
+      <label for="c-name">Name<input id="c-name" name="name" autocomplete="name" required /></label>
+      <label for="c-email">Email<input id="c-email" name="email" type="email" autocomplete="email" required /></label>
+      <label for="c-topic">Subject<select id="c-topic" name="subject"><option>Suggest a topic</option><option>Report a technical error</option><option>Partnership</option><option>Other</option></select></label>
+      <label for="c-msg">Message<textarea id="c-msg" name="message" required></textarea></label>
+      <div><button class="btn btn-navy" type="submit">Send message</button></div>
+      <span class="form-msg" role="status"></span>
+    </form>
+    <div class="static" style="padding:0">
+      {SITE.contactEmail && <p>Email: <b style="user-select:all">{SITE.contactEmail}</b></p>}
+      <h2 style="margin-top:0">Topic requests</h2>
+      <p>Most new articles start from a question a technician asked. If a failure keeps coming back on your floor, describe it and it may become the next article.</p>
+      <h2>Corrections</h2>
+      <p>If you find a number or a procedure that is wrong, say which article and which section. Corrections are reviewed and the article's update date changes when it is fixed.</p>
+    </div>
+  </div></div>
+</BaseLayout>
+<script>
+  const form = document.getElementById('contact-form') as HTMLFormElement;
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msg = form.querySelector('.form-msg') as HTMLElement;
+    const bad = [...form.querySelectorAll<HTMLInputElement>('[required]')].find((x) => !x.value || !x.checkValidity());
+    if (bad) { msg.className = 'form-msg err'; msg.textContent = 'Fill in your name, a valid email and a message.'; bad.focus(); return; }
+    const endpoint = form.dataset.endpoint;
+    if (!endpoint) { msg.className = 'form-msg err'; msg.textContent = 'The contact form is not connected yet. Please try again later.'; return; }
+    try {
+      const res = await fetch(endpoint, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } });
+      if (!res.ok) throw new Error(String(res.status));
+      msg.className = 'form-msg'; msg.textContent = 'Message sent. Thank you.'; form.reset();
+    } catch { msg.className = 'form-msg err'; msg.textContent = 'Sending failed. Try again in a moment.'; }
+  });
+</script>

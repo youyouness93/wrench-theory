@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { FORMATS } from '../data/taxonomy';
+---
+<BaseLayout title="About Wrench Theory" description="Wrench Theory explains industrial maintenance one topic at a time, in short videos and in-depth technical articles for millwrights and maintenance technicians." current="about">
+  <section class="band bp"><div class="wrap">
+    <Breadcrumbs items={[{ name: 'Home', href: '/' }, { name: 'About' }]} />
+    <span class="spec">About Wrench Theory</span>
+    <h1 class="display" style="margin-top:12px">Blueprint precision, shop-floor voice</h1>
+    <p class="intro">Wrench Theory explains industrial maintenance one topic at a time, in short videos and in-depth articles.</p>
+  </div></section>
+  <div class="wrap"><div class="static">
+    <p>Wrench Theory is written by maintenance professionals with years on the floor, first in Morocco and now in Ontario, Canada. The goal is simple: explain the why behind the job, so the fix holds the first time.</p>
+    <h2>Who it's for</h2>
+    <ul><li>Millwrights and industrial mechanics</li><li>Maintenance technicians and planners</li><li>Apprentices and students in industrial mechanics</li></ul>
+    <h2>How articles are made</h2>
+    <p>Each article covers one component or problem in depth. Figures are checked against manufacturer and standards sources, and those sources are listed at the end of the article. Unsafe practices are only shown with a clear warning and the correct method. When an article is corrected, its update date changes.</p>
+    <h2>Four formats</h2>
+    <ul>{FORMATS.map((f) => <li><b>{f.name}.</b> {f.summary}</li>)}</ul>
+    <h2>Safety</h2>
+    <p>Content on this site is general education. Your site procedures, lockout/tagout rules and the equipment manufacturer's manual always come first.</p>
+    <p><a href="/contact/">Suggest a topic or report an error</a></p>
+  </div></div>
+</BaseLayout>

@@ -1,0 +1,6 @@
+---
+import Icon from '../Icon.astro';
+interface Props { title?: string }
+const { title = 'Technical takeaway' } = Astro.props;
+---
+<aside class="takeaway"><div class="box-k"><Icon name="cross" /> {title}</div><slot /></aside>

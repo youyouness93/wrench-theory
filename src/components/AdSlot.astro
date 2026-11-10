@@ -1,0 +1,26 @@
+---
+/**
+ * A reserved Google AdSense placement.
+ * - With PUBLIC_ADSENSE_CLIENT and the slot's id set: renders the real ad unit.
+ * - Otherwise: renders a dashed placeholder in dev (or when PUBLIC_SHOW_AD_PLACEHOLDERS=true), nothing in production.
+ */
+import { ADS, type AdSlotName } from '../config/site';
+interface Props { slot: AdSlotName; class?: string }
+const { slot, class: cls = '' } = Astro.props;
+const conf = ADS.slots[slot];
+const live = Boolean(ADS.client && conf.id);
+const show = live || ADS.showPlaceholders;
+---
+{show && (
+  <div class:list={['ad', conf.shape, cls]} data-ad-slot={slot}>
+    <span class="ad-label">Advertisement</span>
+    {live ? (
+      <>
+        <ins class="adsbygoogle" style="display:block" data-ad-client={ADS.client} data-ad-slot={conf.id} data-ad-format="auto" data-full-width-responsive="true"></ins>
+        <script is:inline>(window.adsbygoogle = window.adsbygoogle || []).push({});</script>
+      </>
+    ) : (
+      <div class="ad-ph"><div><b>Ad slot · {slot}</b>{conf.size}</div></div>
+    )}
+  </div>
+)}

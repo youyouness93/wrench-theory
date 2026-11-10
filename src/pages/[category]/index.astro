@@ -1,0 +1,17 @@
+---
+import CategoryListing from '../../components/pages/CategoryListing.astro';
+import { CATEGORIES } from '../../data/taxonomy';
+import { getArticles } from '../../lib/articles';
+import { pageCount, pageSlice, categoryLead } from '../../lib/paging';
+export async function getStaticPaths() {
+  const all = await getArticles();
+  return CATEGORIES.map((category) => {
+    const inCat = all.filter((a) => a.data.category === category.id);
+    const lead = categoryLead(inCat);
+    const rest = inCat.filter((a) => a !== lead);
+    return { params: { category: category.id }, props: { category, lead, rest, inCat } };
+  });
+}
+const { category, lead, rest, inCat } = Astro.props;
+---
+<CategoryListing category={category} lead={lead} items={pageSlice(rest, 1)} all={inCat} current={1} last={pageCount(rest.length)} />

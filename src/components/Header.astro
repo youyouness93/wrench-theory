@@ -1,0 +1,61 @@
+---
+import Mark from './Mark.astro';
+import Icon from './Icon.astro';
+import SearchForm from './SearchForm.astro';
+import { CATEGORIES } from '../data/taxonomy';
+import { glyphSvg } from '../lib/glyphs';
+import { SITE } from '../config/site';
+interface Props { current?: 'home' | 'articles' | 'about' | 'contact' | '' ; progress?: boolean }
+const { current = '' } = Astro.props;
+const cur = (k: string) => (current === k ? { 'aria-current': 'page' as const } : {});
+---
+<header class="site-h">
+  <div class="wrap">
+    <a class="brand" href="/" aria-label={`${SITE.name}, home`}>
+      <Mark />
+      <span><span class="wm">Wrench <span class="t">Theory</span></span><small class="spec-sm">{SITE.tagline}</small></span>
+    </a>
+    <nav class="nav" id="nav" aria-label="Main">
+      <a href="/" {...cur('home')}>Home</a>
+      <div class="dd">
+        <button id="ddBtn" type="button" aria-expanded="false" aria-controls="ddPanel" {...cur('articles')}>Articles <Icon name="chevron" size={12} /></button>
+        <div class="dd-panel" id="ddPanel" hidden>
+          {CATEGORIES.map((c) => (
+            <a href={`/${c.id}/`}><Fragment set:html={glyphSvg(c.id)} /><span><b>{c.name}</b><span>{c.summary}</span></span></a>
+          ))}
+          <a class="dd-all" href="/articles/"><span><b>All articles</b><span>Browse the whole library.</span></span></a>
+        </div>
+      </div>
+      <a href="/about/" {...cur('about')}>About</a>
+      <a href="/contact/" {...cur('contact')}>Contact</a>
+    </nav>
+    <button class="icon-btn search-btn" id="searchBtn" type="button" aria-expanded="false" aria-controls="searchPop" aria-label="Search articles"><Icon name="search" /></button>
+    <button class="icon-btn menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="nav" aria-label="Open menu"><Icon name="menu" /></button>
+    <div class="progress" id="progress" aria-hidden="true"></div>
+  </div>
+  <div class="search-pop bp" id="searchPop" hidden>
+    <div class="wrap" style="padding-block:14px"><SearchForm id="q-top" /></div>
+  </div>
+</header>
+<script>
+  const $ = (id: string) => document.getElementById(id)!;
+  const dd = $('ddBtn'), panel = $('ddPanel'), menu = $('menuBtn'), nav = $('nav'), sBtn = $('searchBtn'), sPop = $('searchPop');
+  const set = (btn: HTMLElement, el: HTMLElement, open: boolean) => { el.hidden = !open; btn.setAttribute('aria-expanded', String(open)); };
+  const closeAll = () => { set(dd, panel, false); set(sBtn, sPop, false); nav.classList.remove('open'); menu.setAttribute('aria-expanded', 'false'); };
+  dd.addEventListener('click', (e) => { e.stopPropagation(); set(dd, panel, panel.hidden); });
+  menu.addEventListener('click', () => {
+    const open = !nav.classList.contains('open');
+    nav.classList.toggle('open', open); menu.setAttribute('aria-expanded', String(open));
+    if (open) set(dd, panel, true);
+  });
+  sBtn.addEventListener('click', (e) => {
+    e.stopPropagation(); const open = sPop.hidden; set(sBtn, sPop, open);
+    if (open) (document.getElementById('q-top') as HTMLInputElement).focus();
+  });
+  document.addEventListener('click', (e) => {
+    const t = e.target as HTMLElement;
+    if (innerWidth > 980 && !t.closest('.dd')) set(dd, panel, false);
+    if (!t.closest('#searchPop') && !t.closest('#searchBtn')) set(sBtn, sPop, false);
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAll(); });
+</script>

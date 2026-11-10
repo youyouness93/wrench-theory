@@ -1,0 +1,6 @@
+---
+import { figureSvg, type FigureName } from '../../lib/figures';
+interface Props { name: FigureName; caption?: string }
+const { name, caption } = Astro.props;
+---
+<figure class="inline-fig"><div class="frame" set:html={figureSvg(name)} />{caption && <figcaption>{caption}</figcaption>}</figure>

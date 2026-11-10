@@ -1,0 +1,7 @@
+---
+import ArticleListing from '../../components/pages/ArticleListing.astro';
+import { getArticles } from '../../lib/articles';
+import { pageCount, pageSlice } from '../../lib/paging';
+const all = await getArticles();
+---
+<ArticleListing items={pageSlice(all, 1)} current={1} last={pageCount(all.length)} total={all.filter((a) => !a.data.draft).length} />

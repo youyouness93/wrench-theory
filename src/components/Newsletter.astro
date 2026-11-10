@@ -1,0 +1,51 @@
+---
+import { INTEGRATIONS } from '../config/site';
+const endpoint = INTEGRATIONS.newsletterEndpoint;
+---
+<div class="news bp">
+  <div>
+    <span class="spec">Newsletter</span>
+    <h2 class="display">One technical article a week</h2>
+    <p>New articles, the video that goes with them, and one field tip from the shop floor. Free, no spam, unsubscribe in one click.</p>
+  </div>
+  <form class="newsletter-form" action={endpoint || undefined} method="post" data-endpoint={endpoint} novalidate>
+    <label class="sr" for="news-email">Email address</label>
+    <div class="field">
+      <input id="news-email" name="email" type="email" placeholder="you@plant.com" autocomplete="email" required />
+      <button class="btn btn-orange" type="submit">Subscribe</button>
+    </div>
+    <span class="form-msg" role="status"></span>
+    <span class="spec-sm">Your email is used only for the newsletter. See the <a href="/privacy-policy/">Privacy Policy</a>.</span>
+  </form>
+</div>
+<script>
+  document.querySelectorAll<HTMLFormElement>('.newsletter-form').forEach((form) => {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const input = form.querySelector('input') as HTMLInputElement;
+      const msg = form.querySelector('.form-msg') as HTMLElement;
+      if (!input.value || !input.checkValidity()) {
+        msg.className = 'form-msg err';
+        msg.textContent = 'Enter a valid email address, for example you@plant.com.';
+        input.focus();
+        return;
+      }
+      const endpoint = form.dataset.endpoint;
+      if (!endpoint) {
+        msg.className = 'form-msg';
+        msg.textContent = 'The newsletter opens soon. Thanks for your interest.';
+        return;
+      }
+      try {
+        const res = await fetch(endpoint, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } });
+        if (!res.ok) throw new Error(String(res.status));
+        msg.className = 'form-msg';
+        msg.textContent = 'You are subscribed. Check your inbox to confirm.';
+        form.reset();
+      } catch {
+        msg.className = 'form-msg err';
+        msg.textContent = 'Subscription failed. Try again in a moment.';
+      }
+    });
+  });
+</script>

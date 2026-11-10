@@ -1,0 +1,6 @@
+---
+/** Safety warning with a red stamp. Use it whenever an article mentions an unsafe practice. */
+interface Props { stamp?: 'DANGER' | "DON'T" | 'WARNING' | 'WRONG' }
+const { stamp = 'DANGER' } = Astro.props;
+---
+<aside class="danger" role="note"><span class="stamp">{stamp}</span><div><slot /></div></aside>

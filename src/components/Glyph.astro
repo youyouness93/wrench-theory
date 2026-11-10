@@ -1,0 +1,5 @@
+---
+import { glyphSvg } from '../lib/glyphs';
+interface Props { category: string }
+---
+<Fragment set:html={glyphSvg(Astro.props.category)} />

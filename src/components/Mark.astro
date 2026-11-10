@@ -1,0 +1,13 @@
+---
+/** The Wrench Theory hex-nut mark. Swaps to the reverse version in dark mode. */
+interface Props { size?: number; reverse?: boolean }
+const { size = 40, reverse = false } = Astro.props;
+---
+{reverse ? (
+  <img src="/brand/wt-mark-reverse.svg" alt="" width={size} height={size} />
+) : (
+  <>
+    <img class="mk-light" src="/brand/wt-mark.svg" alt="" width={size} height={size} />
+    <img class="mk-rev" src="/brand/wt-mark-reverse.svg" alt="" width={size} height={size} />
+  </>
+)}

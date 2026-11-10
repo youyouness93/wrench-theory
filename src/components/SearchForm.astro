@@ -1,0 +1,11 @@
+---
+import Icon from './Icon.astro';
+interface Props { id: string; value?: string; autofocus?: boolean }
+const { id, value = '', autofocus = false } = Astro.props;
+---
+<form class="field" action="/search/" method="get" role="search">
+  <Icon name="search" />
+  <label class="sr" for={id}>Search articles</label>
+  <input id={id} name="q" type="search" value={value} placeholder="Search: cavitation, soft foot, seal leak…" autocomplete="off" autofocus={autofocus} />
+  <button class="btn btn-navy" type="submit">Search</button>
+</form>

@@ -1,0 +1,12 @@
+---
+import ArticleListing from '../../../components/pages/ArticleListing.astro';
+import { getArticles } from '../../../lib/articles';
+import { pageCount, pageSlice } from '../../../lib/paging';
+export async function getStaticPaths() {
+  const all = await getArticles();
+  const last = pageCount(all.length);
+  return Array.from({ length: last - 1 }, (_, i) => ({ params: { page: String(i + 2) }, props: { all, page: i + 2, last } }));
+}
+const { all, page, last } = Astro.props;
+---
+<ArticleListing items={pageSlice(all, page)} current={page} last={last} total={all.filter((a) => !a.data.draft).length} />

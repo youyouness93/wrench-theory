@@ -1,0 +1,31 @@
+---
+import Mark from './Mark.astro';
+import { CATEGORIES } from '../data/taxonomy';
+import { SITE } from '../config/site';
+const social = SITE.social.filter((s) => s.url);
+const year = new Date().getFullYear();
+---
+<footer class="site-f">
+  <div class="wrap">
+    <div class="f-top">
+      <div class="f-brand">
+        <a class="brand" href="/" aria-label={`${SITE.name}, home`}><Mark reverse /><span class="wm">Wrench <span class="t">Theory</span></span></a>
+        <p>A technical publication for millwrights, maintenance technicians, industrial mechanics and apprentices. Every topic, explained from the bench.</p>
+      </div>
+      <div class="f-col"><h2>Topics</h2><ul>{CATEGORIES.map((c) => <li><a href={`/${c.id}/`}>{c.name}</a></li>)}</ul></div>
+      <div class="f-col"><h2>Wrench Theory</h2><ul>
+        <li><a href="/articles/">All articles</a></li><li><a href="/about/">About</a></li><li><a href="/contact/">Contact</a></li><li><a href="/search/">Search</a></li>
+      </ul></div>
+      {social.length > 0 && (
+        <div class="f-col"><h2>Follow</h2><ul>{social.map((s) => <li><a href={s.url} rel="me noopener" target="_blank">{s.name}</a></li>)}</ul></div>
+      )}
+      <div class="f-col"><h2>Legal</h2><ul>
+        <li><a href="/privacy-policy/">Privacy Policy</a></li><li><a href="/terms-of-use/">Terms of Use</a></li><li><a href="/disclaimer/">Disclaimer</a></li><li><a href="/cookie-policy/">Cookie Policy</a></li>
+      </ul></div>
+    </div>
+    <div class="f-bot">
+      <span>© {year} Wrench Theory</span>
+      <span>Educational content. Your site's lockout/tagout procedure and the OEM manual come first.</span>
+    </div>
+  </div>
+</footer>

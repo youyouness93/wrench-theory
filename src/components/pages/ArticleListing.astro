@@ -1,0 +1,39 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../Breadcrumbs.astro';
+import SearchForm from '../SearchForm.astro';
+import ArticleCard from '../ArticleCard.astro';
+import AdSlot from '../AdSlot.astro';
+import Pagination from '../Pagination.astro';
+import { CATEGORIES, FORMATS } from '../../data/taxonomy';
+import type { Article } from '../../lib/articles';
+interface Props { items: Article[]; current: number; last: number; total: number }
+const { items, current, last, total } = Astro.props;
+---
+<BaseLayout
+  title={current === 1 ? 'All articles' : `All articles, page ${current}`}
+  description="Every Wrench Theory article on hydraulics, mechanical systems, bearings, lubrication, maintenance, troubleshooting and tools."
+  current="articles"
+>
+  <section class="band bp"><div class="wrap">
+    <Breadcrumbs items={[{ name: 'Home', href: '/' }, { name: 'Articles' }]} />
+    <div class="band-grid">
+      <div>
+        <span class="spec">The library</span>
+        <h1 class="display" style="margin-top:12px">All articles</h1>
+        <p class="intro">Technical articles on industrial maintenance and millwrighting, organized by section and format. Pick a section below, or search for a specific symptom or component.</p>
+        <div style="margin-top:24px"><SearchForm id="q-list" /></div>
+      </div>
+      <div class="stats" style="justify-self:end"><div><b>{total}</b>Articles</div><div><b>{CATEGORIES.length}</b>Sections</div><div><b>{FORMATS.length}</b>Formats</div></div>
+    </div>
+  </div></section>
+  <div class="ad-band"><div class="wrap"><AdSlot slot="header" /></div></div>
+  <section class="sec" style="padding-top:24px"><div class="wrap">
+    <div class="toolbar">
+      <nav class="cats" aria-label="Sections">{CATEGORIES.map((c) => <a class="chip cat" href={`/${c.id}/`}>{c.name}</a>)}</nav>
+      <span class="spec-sm">Page {current} of {last}</span>
+    </div>
+    {items.length ? <div class="grid">{items.map((a) => <ArticleCard article={a} headingLevel="h2" />)}</div> : <p class="empty">The first articles are on their way.</p>}
+    <Pagination current={current} last={last} base="/articles/" />
+  </div></section>
+</BaseLayout>

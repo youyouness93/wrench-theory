@@ -1,0 +1,14 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+interface Props { title: string; description: string; updated: string }
+const { title, description, updated } = Astro.props;
+---
+<BaseLayout title={title} description={description}>
+  <section class="band bp"><div class="wrap">
+    <Breadcrumbs items={[{ name: 'Home', href: '/' }, { name: title }]} />
+    <h1 class="display">{title}</h1>
+    <p class="intro">Last updated: {updated}</p>
+  </div></section>
+  <div class="wrap"><div class="static"><slot /></div></div>
+</BaseLayout>

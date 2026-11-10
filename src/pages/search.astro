@@ -1,0 +1,54 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import SearchForm from '../components/SearchForm.astro';
+---
+<BaseLayout title="Search" description="Search the Wrench Theory technical library." noindex>
+  <section class="band bp"><div class="wrap">
+    <Breadcrumbs items={[{ name: 'Home', href: '/' }, { name: 'Search' }]} />
+    <h1 class="display" style="font-size:clamp(42px,5vw,64px)">Search the library</h1>
+    <div style="margin-top:24px"><SearchForm id="q-page" autofocus /></div>
+  </div></section>
+  <section class="sec" style="padding-top:40px"><div class="wrap">
+    <p class="result-h" id="result-h" role="status">Try a component, a symptom or a test: cylinder, bearing, soft foot, ISO 4406.</p>
+    <div class="grid" id="results"></div>
+  </div></section>
+</BaseLayout>
+<script>
+  type Item = { url: string; title: string; short: string; description: string; category: string; format: string; text: string; date: string; minutes: number };
+  const params = new URLSearchParams(location.search);
+  const q = (params.get('q') || '').trim();
+  const input = document.getElementById('q-page') as HTMLInputElement;
+  const head = document.getElementById('result-h')!;
+  const out = document.getElementById('results')!;
+  input.value = q;
+  const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+  const words = q.toLowerCase().split(/\s+/).filter(Boolean);
+  const hl = (s: string) => {
+    let h = esc(s);
+    words.forEach((w) => { h = h.replace(new RegExp(`(${w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'ig'), '<mark>$1</mark>'); });
+    return h;
+  };
+  if (q) {
+    fetch('/search-index.json')
+      .then((r) => r.json())
+      .then((items: Item[]) => {
+        const scored = items
+          .map((it) => {
+            const t = it.title.toLowerCase(), d = it.description.toLowerCase(), x = it.text.toLowerCase();
+            let score = 0;
+            for (const w of words) {
+              if (t.includes(w)) score += 5; else if (d.includes(w)) score += 2; else if (x.includes(w)) score += 1; else return { it, score: 0 };
+            }
+            return { it, score };
+          })
+          .filter((s) => s.score > 0)
+          .sort((a, b) => b.score - a.score);
+        head.textContent = `${scored.length} result${scored.length === 1 ? '' : 's'} for “${q}”`;
+        out.innerHTML = scored.length
+          ? scored.map(({ it }) => `<a class="card" href="${it.url}"><div class="chips"><span class="chip cat">${esc(it.category)}</span><span class="chip fmt">${esc(it.format)}</span></div><h2 style="font-family:var(--f-display);font-weight:800;font-size:26px;line-height:1.02;text-transform:uppercase;margin:0">${hl(it.short)}</h2><p>${hl(it.description)}</p><div class="meta"><span>${it.minutes} min read</span></div></a>`).join('')
+          : `<p class="empty">Nothing matches yet. Try a broader word, or <a href="/articles/">browse all articles</a>.</p>`;
+      })
+      .catch(() => { head.textContent = 'Search is unavailable right now. Browse the sections instead.'; });
+  }
+</script>

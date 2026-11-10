@@ -1,0 +1,21 @@
+---
+import { Image } from 'astro:assets';
+import { glyphSvg } from '../lib/glyphs';
+import { getCategory } from '../data/taxonomy';
+import type { Article } from '../lib/articles';
+interface Props { article: Article; style?: string; eager?: boolean }
+const { article, style, eager = false } = Astro.props;
+const d = article.data;
+const c = getCategory(d.category);
+---
+<div class="cover bp" style={style}>
+  {d.heroImage ? (
+    <Image src={d.heroImage} alt="" widths={[400, 800, 1200]} sizes="(max-width: 620px) 100vw, 400px" loading={eager ? 'eager' : 'lazy'} />
+  ) : (
+    <>
+      <Fragment set:html={glyphSvg(d.category)} />
+      <span class="c-tl">{c.code} · {d.subtopic}</span>
+      <span class="c-br">DWG. {d.docNumber}</span>
+    </>
+  )}
+</div>
