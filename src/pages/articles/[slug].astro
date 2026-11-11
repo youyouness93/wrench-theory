@@ -75,6 +75,8 @@ const enc = encodeURIComponent;
     <header class="a-head band bp">
       <div class="wrap">
         <Breadcrumbs items={[{ name: 'Home', href: '/' }, { name: cat.name, href: `/${cat.id}/` }, { name: cardTitle(article) }]} />
+        <div class="a-head-grid">
+        <div class="a-head-text">
         <div class="chips">
           <a class="chip cat" href={`/${cat.id}/`}>{cat.name}</a>
           <span class="chip fmt">{d.format}</span>
@@ -89,6 +91,25 @@ const enc = encodeURIComponent;
             <span>{minutes} min read</span><i></i><span>DWG. {d.docNumber}</span>
           </div>
         </div>
+        </div>
+      <figure class="a-fig a-head-fig">
+        {d.heroImage ? (
+          <div class="frame"><Image src={d.heroImage} alt={d.heroAlt ?? ''} widths={[640, 960, 1400]} sizes="(max-width: 980px) 100vw, 560px" loading="eager" /></div>
+        ) : d.heroFigure ? (
+          <div class="frame" set:html={figureSvg(d.heroFigure)} />
+        ) : (
+          <Cover article={article} style="aspect-ratio:4/3;border-radius:var(--r-xl)" eager />
+        )}
+        {(d.heroCaption || (d.heroImage && d.heroCredit)) && (
+          <figcaption>
+            {d.heroCaption}
+            {d.heroImage && d.heroCredit && (
+              <span class="credit">Photo: {d.heroCredit.author}, <a href={d.heroCredit.licenseUrl ?? d.heroCredit.source} rel="noopener license" target="_blank">{d.heroCredit.license}</a>, via <a href={d.heroCredit.source} rel="noopener" target="_blank">{d.heroCredit.site}</a></span>
+            )}
+          </figcaption>
+        )}
+      </figure>
+        </div>
       </div>
     </header>
 
@@ -97,24 +118,6 @@ const enc = encodeURIComponent;
     <div class="wrap">
       <div class="a-body">
         <div class="prose">
-          <figure class="a-fig">
-            {d.heroImage ? (
-              <div class="frame"><Image src={d.heroImage} alt={d.heroAlt ?? ''} widths={[640, 960, 1400]} sizes="(max-width: 1060px) 100vw, 760px" loading="eager" /></div>
-            ) : d.heroFigure ? (
-              <div class="frame" set:html={figureSvg(d.heroFigure)} />
-            ) : (
-              <Cover article={article} style="aspect-ratio:21/9;border-radius:var(--r-xl)" eager />
-            )}
-            {(d.heroCaption || (d.heroImage && d.heroCredit)) && (
-              <figcaption>
-                {d.heroCaption}
-                {d.heroImage && d.heroCredit && (
-                  <span class="credit">Photo: {d.heroCredit.author}, <a href={d.heroCredit.licenseUrl ?? d.heroCredit.source} rel="noopener license" target="_blank">{d.heroCredit.license}</a>, via <a href={d.heroCredit.source} rel="noopener" target="_blank">{d.heroCredit.site}</a></span>
-                )}
-              </figcaption>
-            )}
-          </figure>
-
           {sections.length > 1 && (
             <nav class="toc" aria-labelledby="toc-h">
               <span class="toc-h" id="toc-h">Table of contents</span>
