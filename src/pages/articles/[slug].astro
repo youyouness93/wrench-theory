@@ -105,7 +105,14 @@ const enc = encodeURIComponent;
             ) : (
               <Cover article={article} style="aspect-ratio:21/9;border-radius:var(--r-xl)" eager />
             )}
-            {d.heroCaption && <figcaption>{d.heroCaption}</figcaption>}
+            {(d.heroCaption || (d.heroImage && d.heroCredit)) && (
+              <figcaption>
+                {d.heroCaption}
+                {d.heroImage && d.heroCredit && (
+                  <span class="credit">Photo: {d.heroCredit.author}, <a href={d.heroCredit.licenseUrl ?? d.heroCredit.source} rel="noopener license" target="_blank">{d.heroCredit.license}</a>, via <a href={d.heroCredit.source} rel="noopener" target="_blank">Wikimedia Commons</a></span>
+                )}
+              </figcaption>
+            )}
           </figure>
 
           {sections.length > 1 && (

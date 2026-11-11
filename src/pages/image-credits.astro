@@ -1,0 +1,24 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro';
+import { getArticles, articleUrl } from '../lib/articles';
+const credited = (await getArticles()).filter((a) => a.data.heroImage && a.data.heroCredit);
+---
+<LegalLayout title="Image credits" description="Credits and licences for the photographs used on Wrench Theory." updated="November 11, 2026">
+  <p>Technical drawings and diagrams on this site are original work by Wrench Theory. The photographs below are used under their authors' licences.</p>
+  {credited.length ? (
+    <ul>
+      {credited.map((a) => {
+        const c = a.data.heroCredit!;
+        return (
+          <li>
+            <a href={articleUrl(a)}>{a.data.shortTitle ?? a.data.title}</a>: {c.title ? `“${c.title}”, ` : ''}photo by {c.author},{' '}
+            <a href={c.licenseUrl ?? c.source} rel="noopener license" target="_blank">{c.license}</a>, via{' '}
+            <a href={c.source} rel="noopener" target="_blank">Wikimedia Commons</a>.
+          </li>
+        );
+      })}
+    </ul>
+  ) : (
+    <p>No third-party photographs are in use yet.</p>
+  )}
+</LegalLayout>

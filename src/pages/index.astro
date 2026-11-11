@@ -60,7 +60,7 @@ const webSiteLd = {
     <section class="sec"><div class="wrap">
       <div class="sec-h"><div><span class="spec">Featured analysis</span><h2 class="display">This week on the bench</h2></div></div>
       <a class="feat" href={articleUrl(featured)}>
-        {featured.data.heroFigure ? (
+        {featured.data.heroFigure && !featured.data.heroImage ? (
           <div class="cover bp" style="aspect-ratio:760/300" set:html={figureSvg(featured.data.heroFigure, 'position:absolute;inset:0;width:100%;height:100%')} />
         ) : (
           <Cover article={featured} eager />

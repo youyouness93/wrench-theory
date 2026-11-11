@@ -331,6 +331,8 @@ a.chip:hover { border-color: var(--cobalt); color: var(--cobalt-ink); }
 .a-fig .frame { border: 1px solid var(--hairline); border-radius: var(--r-xl); overflow: auto; }
 .a-fig .frame > img { display: block; width: 100%; }
 .a-fig svg { display: block; min-width: 620px; width: 100%; height: auto; }
+figcaption .credit { display: block; margin-top: 4px; font-size: 11px; }
+figcaption .credit a { color: var(--muted); }
 figcaption { font-family: var(--f-mono); font-size: 12px; letter-spacing: 0.04em; color: var(--muted); margin-top: 10px; line-height: 1.5; }
 .a-body { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 64px; align-items: start; padding-block: 16px 72px; }
 @media (max-width: 1060px) { .a-body { grid-template-columns: minmax(0, 1fr); gap: 48px; } }

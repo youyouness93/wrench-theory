@@ -26,6 +26,10 @@ const articles = defineCollection({
       heroFigure: z.enum(['cylinder-cutaway', 'bearing-section']).optional(),
       heroAlt: z.string().optional(),
       heroCaption: z.string().optional(),
+      // Required for third-party photos (e.g. Wikimedia Commons): shown under the image and on /image-credits/
+      heroCredit: z
+        .object({ author: z.string(), license: z.string(), licenseUrl: z.string().url().optional(), source: z.string().url(), title: z.string().optional() })
+        .optional(),
       video: z.object({ title: z.string(), url: z.string().url().optional(), length: z.string().default('0:60') }).optional(),
       faq: z.array(z.object({ q: z.string(), a: z.string() })).default([]),
       sources: z.array(z.string()).default([]),
