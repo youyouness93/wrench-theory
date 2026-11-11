@@ -190,6 +190,10 @@ const enc = encodeURIComponent;
         </div>
 
         <aside class="rail" aria-label="Sidebar">
+          {popular.length > 0 && (
+            <div class="rail-box"><h2>Latest articles</h2><ol class="pop">{popular.map((p) => <li><a href={articleUrl(p)}>{cardTitle(p)}</a></li>)}</ol></div>
+          )}
+          <div class="rail-box"><h2>Sections</h2><div class="cats">{CATEGORIES.map((c) => <a class="chip cat" href={`/${c.id}/`}>{c.short}</a>)}</div></div>
           <div class="rail-sticky">
             {sections.length > 1 && (
               <div class="rail-box otp-box">
@@ -202,10 +206,6 @@ const enc = encodeURIComponent;
             )}
             <AdSlot slot="sidebar" />
           </div>
-          {popular.length > 0 && (
-            <div class="rail-box"><h2>Latest articles</h2><ol class="pop">{popular.map((p) => <li><a href={articleUrl(p)}>{cardTitle(p)}</a></li>)}</ol></div>
-          )}
-          <div class="rail-box"><h2>Sections</h2><div class="cats">{CATEGORIES.map((c) => <a class="chip cat" href={`/${c.id}/`}>{c.short}</a>)}</div></div>
         </aside>
       </div>
     </div>
