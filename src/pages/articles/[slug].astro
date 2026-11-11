@@ -109,7 +109,7 @@ const enc = encodeURIComponent;
               <figcaption>
                 {d.heroCaption}
                 {d.heroImage && d.heroCredit && (
-                  <span class="credit">Photo: {d.heroCredit.author}, <a href={d.heroCredit.licenseUrl ?? d.heroCredit.source} rel="noopener license" target="_blank">{d.heroCredit.license}</a>, via <a href={d.heroCredit.source} rel="noopener" target="_blank">Wikimedia Commons</a></span>
+                  <span class="credit">Photo: {d.heroCredit.author}, <a href={d.heroCredit.licenseUrl ?? d.heroCredit.source} rel="noopener license" target="_blank">{d.heroCredit.license}</a>, via <a href={d.heroCredit.source} rel="noopener" target="_blank">{d.heroCredit.site}</a></span>
                 )}
               </figcaption>
             )}

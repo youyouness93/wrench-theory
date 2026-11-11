@@ -13,7 +13,7 @@ const credited = (await getArticles()).filter((a) => a.data.heroImage && a.data.
           <li>
             <a href={articleUrl(a)}>{a.data.shortTitle ?? a.data.title}</a>: {c.title ? `“${c.title}”, ` : ''}photo by {c.author},{' '}
             <a href={c.licenseUrl ?? c.source} rel="noopener license" target="_blank">{c.license}</a>, via{' '}
-            <a href={c.source} rel="noopener" target="_blank">Wikimedia Commons</a>.
+            <a href={c.source} rel="noopener" target="_blank">{c.site}</a>.
           </li>
         );
       })}
